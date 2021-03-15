@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-03-15T13:06:47Z</date>
+    <groups>
+        <group>
+            <name>Templates/Modules</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Module VMware old snapshots</template>
+            <name>Template Module VMware old snapshots</name>
+            <groups>
+                <group>
+                    <name>Templates/Modules</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Snapshot data</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Old snapshots</name>
+                    <type>EXTERNAL</type>
+                    <key>esxi-old-snapshots.py[&quot;--vcenter={HOST.CONN}&quot;, &quot;--username={$VMWARE.USERNAME}&quot;, &quot;--password={$VMWARE.PASSWORD}&quot;, &quot;--name={$SNAPSHOT_NAME}&quot;, &quot;--time={$SNAPSHOT_AGE}&quot;]</key>
+                    <delay>1h</delay>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Snapshot data</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{strlen()}&gt;0</expression>
+                            <name>{HOST.NAME} has snapshots &quot;{$SNAPSHOT_NAME}&quot; older than &quot;{$SNAPSHOT_AGE}&quot;</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$SNAPSHOT_AGE}</macro>
+                    <value>48h</value>
+                    <description>Age of snapshot to search. Accepted time suffixes - s, m, h, d, w</description>
+                </macro>
+                <macro>
+                    <macro>{$SNAPSHOT_NAME}</macro>
+                    <value>VEEAM BACKUP TEMPORARY SNAPSHOT</value>
+                    <description>Name of snapshot to search</description>
+                </macro>
+                <macro>
+                    <macro>{$VMWARE.PASSWORD}</macro>
+                    <type>SECRET_TEXT</type>
+                    <description>VMware service {$USERNAME} user password</description>
+                </macro>
+                <macro>
+                    <macro>{$VMWARE.USERNAME}</macro>
+                    <value>username</value>
+                    <description>VMware service user name</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
