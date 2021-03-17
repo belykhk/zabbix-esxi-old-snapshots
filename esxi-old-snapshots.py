@@ -173,7 +173,7 @@ def main(vcenter, username, password, name, timeold):
                 if name in snapshot.name:
                     # Calculating time delta from creating snapshot to now
                     delta = datetime.now(utc) - snapshot.createTime
-                    if int(delta.seconds) > timetoseconds(timeold):
+                    if int(delta.total_seconds()) > timetoseconds(timeold):
                         print('VM {} has snapshot {} older than {}'.format(vm.summary.config.name,
                                                                            snapshot.name,
                                                                            timeold))
