@@ -1,0 +1,86 @@
+zabbix_export:
+  version: '6.0'
+  date: '2022-11-18T05:58:02Z'
+  groups:
+    -
+      uuid: 57b7ae836ca64446ba2c296389c009b7
+      name: Templates/Modules
+  templates:
+    -
+      uuid: 33b4b00f5be8494b80c40b120f091cc2
+      template: 'Template module VMware VCSA old snapshots'
+      name: 'Template module VMware VCSA old snapshots'
+      groups:
+        -
+          name: Templates/Modules
+      items:
+        -
+          uuid: dccfb33fae0941a5972f43fe5afa181a
+          name: 'Search old snapshots by name and age'
+          type: EXTERNAL
+          key: 'esxi-old-snapshots.py["--vcenter={$VMWARE.URL}", "--username={$VMWARE.USERNAME}", "--password={$VMWARE.PASSWORD}", "--name={$VMWARE.SNAPSHOTNAME}", "--time={$VMWARE.SNAPSHOTAGE}"]'
+          delay: 1h
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: application
+              value: snapshots
+          triggers:
+            -
+              uuid: a238dea8743b4effb15dddf558f066ef
+              expression: 'bytelength(last(/Template module VMware VCSA old snapshots/esxi-old-snapshots.py["--vcenter={$VMWARE.URL}", "--username={$VMWARE.USERNAME}", "--password={$VMWARE.PASSWORD}", "--name={$VMWARE.SNAPSHOTNAME}", "--time={$VMWARE.SNAPSHOTAGE}"]))>0'
+              name: '{HOST.NAME} has snapshots "{$VMWARE.SNAPSHOTNAME}" older than {$VMWARE.SNAPSHOTAGE}'
+              priority: WARNING
+        -
+          uuid: 7d9d8e98a74a45328abb7116d7aa9909
+          name: 'Search old snapshots by age'
+          type: EXTERNAL
+          key: 'esxi-old-snapshots.py["--vcenter={$VMWARE.URL}", "--username={$VMWARE.USERNAME}", "--password={$VMWARE.PASSWORD}", "--time={$VMWARE.SNAPSHOTAGEONLY}"]'
+          delay: 1h
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: application
+              value: snapshots
+          triggers:
+            -
+              uuid: 62848cc5a4f3426ca704e504be8e3a89
+              expression: 'bytelength(last(/Template module VMware VCSA old snapshots/esxi-old-snapshots.py["--vcenter={$VMWARE.URL}", "--username={$VMWARE.USERNAME}", "--password={$VMWARE.PASSWORD}", "--time={$VMWARE.SNAPSHOTAGEONLY}"]))>0'
+              name: '{HOST.NAME} has snapshots older than {$VMWARE.SNAPSHOTAGEONLY}'
+              priority: WARNING
+      tags:
+        -
+          tag: application
+          value: Virtualization
+        -
+          tag: os
+          value: VMware
+      macros:
+        -
+          macro: '{$VMWARE.PASSWORD}'
+          type: SECRET_TEXT
+          description: 'VMware service {$USERNAME} user password'
+        -
+          macro: '{$VMWARE.SNAPSHOTAGE}'
+          value: 48h
+          description: 'Age of snapshot to search with name defined'
+        -
+          macro: '{$VMWARE.SNAPSHOTAGEONLY}'
+          value: 30d
+          description: 'Age of snapshot to search if no name defined'
+        -
+          macro: '{$VMWARE.SNAPSHOTNAME}'
+          value: 'VEEAM BACKUP TEMPORARY SNAPSHOT'
+          description: 'Name of snapshot to search'
+        -
+          macro: '{$VMWARE.URL}'
+          value: 'https://(ip-fqdn)/sdk/vimService.wsdl'
+          description: 'VMware service (vCenter) SDK URL (https://servername/sdk)'
+        -
+          macro: '{$VMWARE.USERNAME}'
+          value: domain\username
+          description: 'VMware service user name'

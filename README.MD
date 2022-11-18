@@ -2,15 +2,15 @@
 
 Tool to search old snaphots in VCenter with specified name and Zabbix template to use with.
 
-This script is designed for searching stuck Veeam snapshots of Virtual Machines, but can be used to search any snapshots with certain name and age.
+This script is designed for searching stuck Veeam snapshots of Virtual Machines, but can be used to search any snapshots with certain name and (or) age.
 
 ## Prerequiements
 
 1) Installed and working python3 with standart library
 2) Installed VMware Python API SDK:
 ```
-pip3 install setuptools --upgrade
-pip3 install pyvmomi
+python3 -m pip install setuptools --upgrade
+python3 -m pip install pyvmomi
 ```
 
 ## Usage of script (copypaste from '--help'):
@@ -18,20 +18,16 @@ pip3 install pyvmomi
     Usage: esxi-old-snapshots.py [options]
     
     Options:
-      --help                Show this message and exit.
-      -v VCENTER, --vcenter=VCENTER
-                            Vcenter IP address. Mandatory option.
-      -u USERNAME, --username=USERNAME
-                            Vcenter username. Mandatory option.
-      -p PASSWORD, --password=PASSWORD
-                            Vcenter password. Mandatory option.
-      -n NAME, --name=NAME  Exact VM snapshot name to search. Mandatory option.
-      -t TIMEOLD, --time=TIMEOLD
-                            Number of seconds of snapshot oldiness. Can be used
-                            with time suffixes such as 'd', 'h', 'm', eg: '48h' or
-                            '2d'. Mandatory option.
-      -l LOGGING, --logging=LOGGING
-                            Logging level. If not passed - didn't log.
+      --help               Show this message and exit
+      --vcenter=VCENTER    Vcenter IP address. Mandatory option.
+      --username=USERNAME  Vcenter username. Mandatory option.
+      --password=PASSWORD  Vcenter password. Mandatory option.
+      --name=NAME          Exact VM snapshot name to search. If not passed -
+                           searching for all snapshots
+      --time=TIMEOLD       Number of seconds of snapshot oldiness. Can be used
+                           with time suffixes such as 'd', 'h', 'm', 'w', eg:
+                           '48h' or '2d'. Mandatory option.
+      -l, --logging        Enable logging to STDOUT
                             
 
 ## Use with zabbix
@@ -45,4 +41,4 @@ chmod +x esxi-old-snapshots.py
 chown zabbix:zabbix esxi-old-snapshots.py
 ```
 5) Check that VMware Python API SDK installed on server (see Prerequiements)
-6) Apply template `Template Module VMware old snapshots` to host
+6) Apply template `Template module VMware VCSA old snapshots` to host
